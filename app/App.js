@@ -19,15 +19,23 @@ const list = [
     },
 ];
 
+function isSearched(searchTerm) {
+    return function(item) {
+        return item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    }
+}
+
 export default class App extends React.Component {
     constructor(props) {
         super(props) 
 
         this.state = {
             list,
+            searchTerm: ''
         }
 
         this.onDismiss = this.onDismiss.bind(this);
+        this.onSearchChange = this.onSearchChange.bind(this);
     }
 
     onDismiss(id) {
@@ -43,12 +51,25 @@ export default class App extends React.Component {
 
     }
 
+    onSearchChange(event) {
+        this.setState({
+            searchTerm: event.target.value
+        })
+    }
+
     render() {
         const { list } = this.state;
 
         return(
             <div className='App'>
-                {list.map((item) => {
+                <form>
+                    <input 
+                        type="text"
+                        onChange={this.onSearchChange}    
+                    />
+                </form>
+
+                {list.filter(() => {}).map((item) => {
                     return (
                         <div key={item.objectID}>
                             <span>
