@@ -19,6 +19,18 @@ const list = [
     },
 ];
 
+const largeColumn = {
+    width: '40%',
+};
+
+const midColumn = {
+    width: '30%',
+};
+
+const smallColumn = {
+    width: '10%',
+};
+
 function isSearched(searchTerm) {
     return function(item) {
         return item.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -62,13 +74,15 @@ export default class App extends React.Component {
         const { list, searchTerm } = this.state;
 
         return(
-            <div className='App'>
-                <Search 
-                    value={searchTerm}
-                    onChange={this.onSearchChange}
-                >
-                    Search
-                </Search>
+            <div className='page'>
+                <div className="interactions">
+                    <Search 
+                        value={searchTerm}
+                        onChange={this.onSearchChange}
+                    >
+                        Search
+                    </Search>
+                </div>
 
                 <Table 
                     list={list}
@@ -80,71 +94,50 @@ export default class App extends React.Component {
     }
 }   
 
-class Search extends React.Component{
-    render() {
-        const { value, onChange, children } = this.props;
+const Search = ({ value, onChange, children }) => 
+    <form>
+        {children}<input 
+            type="text"
+            value={value}
+            onChange={onChange}    
+        />
+    </form>
 
-        return(
-            <form>
-                {children}<input 
-                    type="text"
-                    value={value}
-                    onChange={onChange}    
-                />
-            </form>
-        )
-    }
-}
+const Table = ({ list, pattern, onDismiss }) => 
+    <div className='table'>
+    {list.filter(isSearched(pattern)).map((item) => {
+            return (
+                <div key={item.objectID}
+                    className='table-row'
+                >
+                    <span style={largeColumn}>
+                        <a href={item.url}>{item.title}</a>
+                    </span>
 
-class Table extends React.Component{
-    render() {
-        const { list, pattern, onDismiss } = this.props;
-        
-        return(
-            <div>
-            {list.filter(isSearched(pattern)).map((item) => {
-                    return (
-                        <div key={item.objectID}>
-                            <span>
-                                <a href={item.url}>{item.title}</a>
-                            </span>
+                    <span style={midColumn}>{item.author}</span>
 
-                            <span>{item.author}</span>
+                    <span style={smallColumn}>{item.num_comments}</span>
 
-                            <span>{item.num_comments}</span>
+                    <span style={smallColumn}>{item.points}</span>
 
-                            <span>{item.points}</span>
+                    <span style={smallColumn}>
+                        <Button
+                            className='button-inline'
+                            onClick={() => onDismiss(item.objectID)}
+                        >
+                                Dismiss
+                        </Button>
+                    </span>
+                </div>
+            );
+        })}
+    </div>
 
-                            <span>
-                                <Button
-                                    onClick={() => onDismiss(item.objectID)}>
-                                        Dismiss
-                                </Button>
-                            </span>
-                        </div>
-                    );
-                })}
-            </div>
-        )
-    }
-}
-
-class Button extends React.Component{
-    render() {
-        const {
-            onClick,
-            className,
-            children
-        } = this.props;
-
-        return(
-            <button
-                onClick={onClick}
-                className={className}
-                type='button'
-            >
-                    {children}
-            </button>
-        )
-    }
-}
+const Button = ({ onClick, className, children }) => 
+    <button
+        onClick={onClick}
+        className={className}
+        type='button'
+    >
+            {children}
+    </button>
