@@ -19,16 +19,25 @@ const list = [
     },
 ];
 
+function isSearched(searchTerm) {
+    return function(item) {
+        return item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    }
+}
+
 export default class App extends React.Component {
     constructor(props) {
         super(props) 
 
         this.state = {
             list,
+            searchTerm: ''
         }
 
         this.onDismiss = this.onDismiss.bind(this);
+        this.onSearchChange = this.onSearchChange.bind(this);
     }
+
 
     onDismiss(id) {
         const { list } = this.state;
@@ -43,12 +52,54 @@ export default class App extends React.Component {
 
     }
 
+    onSearchChange(event) {
+        this.setState({
+            searchTerm: event.target.value
+        })
+    }
+
     render() {
-        const { list } = this.state;
+        const { list, searchTerm } = this.state;
 
         return(
             <div className='App'>
-                {list.map((item) => {
+                <Search 
+                    value={searchTerm}
+                    onChange={this.onSearchChange}
+                />
+                <Table 
+                    list={list}
+                    pattern={searchTerm}
+                    onDismiss={this.onDismiss}
+                />
+            </div>
+        )
+    }
+}   
+
+class Search extends React.Component{
+    render() {
+        const { value, onChange } = this.props;
+
+        return(
+            <form>
+                <input 
+                    type="text"
+                    value={value}
+                    onChange={onChange}    
+                />
+            </form>
+        )
+    }
+}
+
+class Table extends React.Component{
+    render() {
+        const { list, pattern, onDismiss } = this.props;
+        
+        return(
+            <div>
+            {list.filter(isSearched(pattern)).map((item) => {
                     return (
                         <div key={item.objectID}>
                             <span>
@@ -63,7 +114,7 @@ export default class App extends React.Component {
 
                             <span>
                                 <button
-                                    onClick={() => this.onDismiss(item.objectID)}>
+                                    onClick={() => onDismiss(item.objectID)}>
                                         Dismiss
                                 </button>
                             </span>
@@ -73,4 +124,4 @@ export default class App extends React.Component {
             </div>
         )
     }
-}   
+}
