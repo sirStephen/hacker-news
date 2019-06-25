@@ -8,25 +8,6 @@ const PARAM_SEARCH = 'query=';
 
 const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 
-const list = [
-    {
-        title: 'React',
-        url: 'https://reactjs.org/',
-        author: 'Jordan Walke',
-        num_comments: 3,
-        points: 4,
-        objectID: 0,
-    },
-    {
-        title: 'Redux',
-        url: 'https://redux.js.org/',
-        author: 'Dan Abramov, Andrew Clark',
-        num_comments: 2,
-        points: 5,
-        objectID: 1,
-    },
-];
-
 const largeColumn = {
     width: '40%',
 };
@@ -75,15 +56,18 @@ export default class App extends React.Component {
     }
 
     onDismiss(id) {
-        const { list } = this.state;
+        const { result } = this.state;
 
-        const updatedList = list.filter((item) => {
-            return item.objectID !== id;
-        });
+        const isNotId = item => item.objectID !== id;
+
+        const updatedHits = result.hits.filter(isNotId);
 
         this.setState({
-            list: updatedList
-        })
+            result: {
+                ...result,
+                hits: updatedHits
+            }
+        });
 
     }
 
